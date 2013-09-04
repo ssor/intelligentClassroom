@@ -1,0 +1,128 @@
+﻿<html>
+<head>
+    <title>jQuery MiniUI Demo</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <link href="__PUBLIC__/demo.css" rel="stylesheet" type="text/css" />
+
+    <script src="__PUBLIC__/jquery-1.6.2.min.js" type="text/javascript"></script> 
+    
+    <script src="__PUBLIC__/boot.js" type="text/javascript"></script> 
+    <style type="text/css">
+    html,html body
+    {
+        font-family:宋体;
+        font-size:13px;
+    }
+    h2
+    {
+        font-family: "Trebuchet MS",Arial,sans-serif;
+    }
+    p
+    {
+        line-height:22px;
+    }
+    </style>
+</head>
+<body>
+    <h2>物联网实验箱实训系统运行环境 </h2>
+    <p>列表中包含了运行实验箱配套软件可能需要的底层环境。</p>
+
+    <br />
+    <div id="result" class="none result" style="float:right;font-family:微软雅黑,Tahoma;width:150px;letter-spacing:2px"></div>
+     <form id="form1" method='post' action="__URL__/insert">
+        <div style="width:800px;">
+            <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+                <table style="width:100%;">
+                    <tr>
+                        <td style="width:100%;">
+                            <!-- <a class="mini-button" iconCls="icon-upload" onclick="upload()">上传</a> -->
+                            <a class="mini-button" iconCls="icon-download" onclick="download()">下载</a>
+                            <a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
+                            <!-- <a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>        -->
+                        </td>
+    <!--                     <td style="white-space:nowrap;">
+                            <input id="key" class="mini-textbox" emptyText="请输入姓名" style="width:150px;" onenter="onKeyEnter"/>   
+                            <a class="mini-button" onclick="search()">查询</a>
+                        </td> -->
+                    </tr>
+                </table>           
+            </div>
+        </div>
+        <div id="datagrid1" class="mini-datagrid" style="width:800px;height:400px;" 
+        url="__URL__/base_softwares_list"  idField="id" allowResize="true"
+        sizeList="[20,30,50,100]" pageSize="20" allowCellSelect="true" multiSelect="false">
+            <div property="columns">
+                <!-- <div type="indexcolumn" ></div> -->
+                <div type="checkcolumn"></div>
+                <!-- <div field="id" width="120" headerAlign="center" allowSort="true">软件ID</div>     -->
+                <div field="name" width="120" headerAlign="center" allowSort="true">软件名称</div>                            
+                <div field="time_upload" width="100" headerAlign="center" dateFormat="yyyy-MM-dd" allowSort="true">上传日期</div>                
+                <div field="note" width="200" headerAlign="center" allowSort="true">说明</div>                            
+            </div>
+        </div>  
+    </form>
+
+        <script type="text/javascript">
+        mini.parse();       
+
+
+        var grid = mini.get("datagrid1");
+
+        grid.load();
+        
+        function refresh()
+        {
+            grid.load();
+
+        }
+        //对"createtime"字段，进行降级排序
+        // grid.sortBy("createtime", "desc");
+        function download()
+        {
+            var row = grid.getSelected();
+            if (row) {
+                // alert(row.id);
+                // window.location.href = "__URL__/download_software/id/" + row.id;
+                $.get("__URL__/download_software/id/"+ row.id, download_complete);
+            }
+        }
+        function download_complete(result)
+        {
+            if (result == "fail") {
+
+                mini.alert("文件不存在！");
+            }
+            else
+            {
+                // window.location.href(result);
+                window.open( result);
+            }
+
+        }
+        function search() {
+            var key = mini.get("key").getValue();
+            grid.load({ key: key });
+            // var key = document.getElementById("key").value;
+            // grid.load({ key: key });
+        }
+        $("#key").bind("keydown", function (e) {
+            if (e.keyCode == 13) {
+                search();
+            }
+        });
+        ///////////////////////////////////////////////////////
+        var Genders = [{ id: 1, text: '男' }, { id: 2, text: '女'}];
+        function onGenderRenderer(e) {
+            for (var i = 0, l = Genders.length; i < l; i++) {
+                var g = Genders[i];
+                if (g.id == e.value) return g.text;
+            }
+            return "";
+        }
+    </script>
+    <!-- <a href="http://www.miniui.com/bbs" target="_blank">提交BUG</a>  -->
+    <br /><br />
+    <!-- <a href="http://www.miniui.com/download" target="_blank">下载MiniUI</a> -->
+       
+</body>
+</html>
